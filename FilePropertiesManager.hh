@@ -8,6 +8,7 @@
 #include <set>
 #include <sstream>
 #include <stdexcept>
+#include <iostream>
 
 // Enum used to label types of analysis ntuple files
 enum class NtupleFileType {
@@ -157,6 +158,7 @@ class FilePropertiesManager {
 
     // Returns a string representation of an NtupleFileType value, or
     // an empty string if one could not be found.
+    
     std::string ntuple_type_to_string( const NtupleFileType& type ) const {
       std::string result;
       for ( const auto& pair : string_to_file_type_map_ ) {
@@ -182,7 +184,7 @@ class FilePropertiesManager {
     inline void load_file_properties(
       const std::string& input_table_file_name = "" )
     {
-
+      std::cout << "Inside::load_file_properties"<< std::endl; 
       // Clear out any pre-existing contents of the owned maps storing
       // analysis ntuple file properties
       ntuple_file_map_.clear();
@@ -192,19 +194,22 @@ class FilePropertiesManager {
       if ( path == nullptr ) throw std::runtime_error( "The environment"
         " variable STV_ANALYSIS_DIR is not set. Please set it and try again." );
 
-      analysis_path_ = path;
+      analysis_path_ = "/exp/uboone/app/users/cnguyen/stv-analysis-new";
 
       // If the user didn't manually specify a table of file properties, then
       // use the default one
       std::string in_file_name( input_table_file_name );
       if ( in_file_name.empty() ) {
-        in_file_name = analysis_path_ + "/file_properties.txt";
+        in_file_name = analysis_path_ + "/nuwro_file_properties_Tuples_5_13_2024_Closure.txt";
+        //_pmucorrection
       }
 
       // Store the name of the configuration file that was used so that (if
       // needed) we can retrieve it later
       config_file_name_ = in_file_name;
-
+      std::cout<<"~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"<< std::endl;
+      std::cout<< "config_file_name = " <<  config_file_name_ << std::endl;
+      std::cout<<"~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"<< std::endl;
       std::ifstream in_file( in_file_name );
 
       if ( !in_file ) {
@@ -225,7 +230,11 @@ class FilePropertiesManager {
         std::string type_str;
         std::istringstream temp_ss( temp_line );
         temp_ss >> file_name >> run >> type_str;
-
+        std::cout<<"===================================="<< std::endl;
+        std::cout<<"file_name = " << file_name<< std::endl;
+        std::cout<<"run = " << run<< std::endl;
+        std::cout<<"type_str = " << type_str.c_str()<< std::endl;
+        std::cout<<"===================================="<< std::endl;
         // Convert the type string into an enum class value
         NtupleFileType type = string_to_file_type_map_.at( type_str );
 

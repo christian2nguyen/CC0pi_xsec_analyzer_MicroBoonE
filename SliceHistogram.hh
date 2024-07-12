@@ -13,7 +13,7 @@
 // STV analysis includes
 #include "MatrixUtils.hh"
 #include "NormShapeCovMatrix.hh"
-#include "SliceBinning.hh"
+#include "includes/SliceBinning.hh"
 #include "SystematicsCalculator.hh"
 
 class SliceHistogram {
@@ -40,7 +40,8 @@ class SliceHistogram {
 
     // Create a column vector with the current histogram bin contents
     TMatrixD get_col_vect() const;
-
+    //TMatrixD get_TMatrixD() const; 
+    //CovMatrix get_CovMatrix() const;
     // Calculates a decomposition of the full covariance matrix into norm,
     // mixed, and shape-only pieces
     void calc_norm_shape_errors();
@@ -342,6 +343,7 @@ SliceHistogram::Chi2Result SliceHistogram::get_chi2(
       " calculation" );
   }
 
+std::cout<<"inside get_chi2 "<< std::endl;
   // If both SliceHistogram objects have a covariance matrix, then
   // check that their dimensions match. If one is missing, it will be assumed
   // to be a null matrix
@@ -480,3 +482,20 @@ TMatrixD SliceHistogram::get_col_vect() const {
   }
   return hist_vec;
 }
+
+/*
+TMatrixD SliceHistogram::get_TMatrixD() const {
+
+ auto orig_cov = cmat_.get_matrix();
+ TMatrixD transformed_cov = *orig_cov;
+
+  return transformed_cov;
+}
+
+CovMatrix SliceHistogram::get_CovMatrix() const {
+auto matrix = get_TMatrixD();
+CovMatrix output( matrix );
+return output;
+}
+
+*/

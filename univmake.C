@@ -24,6 +24,7 @@
 // to have this branch.
 bool is_reweightable_mc_ntuple( const std::string& input_file_name ) {
   TFile temp_file( input_file_name.c_str(), "read" );
+  std::cout<<"Inside:is_reweightable_mc_ntuple::reweightable_mc_ntuple : Name = " <<  input_file_name.c_str() << std::endl;
   TTree* stv_tree = nullptr;
   temp_file.GetObject( "stv_tree", stv_tree );
   if ( !stv_tree ) throw std::runtime_error( "Missing TTree \"stv_tree\" in"
@@ -65,13 +66,14 @@ int main( int argc, char* argv[] ) {
     << fp_config_file_name << '\n';
 
   // Read in the complete list of input ntuple files that should be processed
+  std::cout<<"Reading in List of Files from:" << list_file_name <<  std::endl;
   std::ifstream in_file( list_file_name );
   std::vector< std::string > input_files;
   std::string temp_line;
   while ( std::getline(in_file, temp_line) ) {
     // Ignore lines that begin with the '#' character (this allows for
     // comments in the normalization table file
-    if ( temp_line.front() == '#' ) continue;
+    if ( temp_line.front() == '#' || temp_line == "" ) continue;
 
     // Read in the ntuple file name from the beginning of the current line of
     // the list file. Any trailing line contents separated from the name by
@@ -79,7 +81,8 @@ int main( int argc, char* argv[] ) {
     std::string file_name;
     std::istringstream temp_ss( temp_line );
     temp_ss >> file_name;
-
+    std::cout<<" Getting File Named : " << file_name<< std::endl;
+    
     input_files.push_back( file_name );
   }
 
@@ -87,6 +90,8 @@ int main( int argc, char* argv[] ) {
     << input_files.size() << " input ntuple files\n";
 
   ROOT::EnableImplicitMT();
+
+
 
   // Store the name of the root TDirectoryFile created by the UniverseMaker
   // objects below. We will use it to ensure that the MCC9SystematicsCalculator
@@ -111,15 +116,18 @@ int main( int argc, char* argv[] ) {
     if ( has_event_weights ) {
       // If the check above was successful, then run all of the histogram
       // calculations in the usual way
+      std::cout<<"Inside::build_universes::has_event_weights"<<std::endl; 
       univ_maker.build_universes();
     }
     else {
       // Passing in the fake list of explicit branch names below instructs
       // the UniverseMaker class to ignore all event weights while
-      // processing the current ntuple
+      // processing the current ntuple\     
+      std::cout<<"Inside::build_universes::has_event_weights::FAKE_BRANCH_NAME"<<std::endl; 
       univ_maker.build_universes( { "FAKE_BRANCH_NAME" } );
     }
 
+    std::cout<<"Saving Histograms"<<std::endl;
     univ_maker.save_histograms( output_file_name, input_file_name );
 
     // The root TDirectoryFile name is the same across all iterations of this

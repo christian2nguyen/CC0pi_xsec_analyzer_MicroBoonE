@@ -10,7 +10,7 @@
 #include "TTree.h"
 
 // STV analysis includes
-#include "TreeUtils.hh"
+#include "includes/TreeUtils.hh"
 
 // Class that provides temporary storage for event weights being processed by a
 // UniverseMaker object

@@ -11,36 +11,51 @@
 // STV analysis includes
 #include "FilePropertiesManager.hh"
 #include "MCC9SystematicsCalculator.hh"
-#include "PlotUtils.hh"
-#include "SliceBinning.hh"
+#include "includes/PlotUtils.hh"
+#include "includes/SliceBinning.hh"
 #include "SliceHistogram.hh"
 
 using NFT = NtupleFileType;
 
-#define USE_FAKE_DATA ""
+#define USE_FAKE_DATA 
 
 void tutorial_slice_plots() {
 
   #ifdef USE_FAKE_DATA
     // Initialize the FilePropertiesManager and tell it to treat the NuWro
     // MC ntuples as if they were data
+    std::cout<< "using Fake Data"<< std::endl;
     auto& fpm = FilePropertiesManager::Instance();
     fpm.load_file_properties( "nuwro_file_properties.txt" );
   #endif
 
+
+std::cout<< "Starting :MCC9SystematicsCalculator" << std::endl;
+
   auto* syst_ptr = new MCC9SystematicsCalculator(
-    "/uboone/data/users/gardiner/tutorial_univmake_output.root",
+    "/uboone/data/users/cnguyen/CC0Pi_Selection/EventSelection_2_11_24/UnivMake_FakeData_1D.root",
     "systcalc.conf" );
   auto& syst = *syst_ptr;
+
+std::cout<< "Finished :MCC9SystematicsCalculator" << std::endl;
+
 
   // Get access to the relevant histograms owned by the SystematicsCalculator
   // object. These contain the reco bin counts that we need to populate the
   // slices below.
+  
+  
+   std::cout<< "Trying to Get hist from  kOnBNB" << std::endl;
+  
   TH1D* reco_bnb_hist = syst.data_hists_.at( NFT::kOnBNB ).get();
+     std::cout<< "Trying to Get hist from kExtBNB" << std::endl;
   TH1D* reco_ext_hist = syst.data_hists_.at( NFT::kExtBNB ).get();
+
+ std::cout<< "Got OnBNB and ExitBNB" << std::endl;
 
   #ifdef USE_FAKE_DATA
     // Add the EXT to the "data" when working with fake data
+     std::cout<< "USE_FAKE_DATA :: adding ext bnb" << std::endl;
     reco_bnb_hist->Add( reco_ext_hist );
   #endif
 
@@ -58,8 +73,8 @@ void tutorial_slice_plots() {
   // represent the corresponding matrices
   auto* matrix_map_ptr = syst.get_covariances().release();
   auto& matrix_map = *matrix_map_ptr;
-
-  auto* sb_ptr = new SliceBinning( "tutorial_slice_config.txt" );
+std::cout<<"Trying :: SliceBinning( mybins_mcc8_all.txt)"<< std::endl;
+  auto* sb_ptr = new SliceBinning( "mybins_mcc8_all.txt" );
   auto& sb = *sb_ptr;
 
   for ( size_t sl_idx = 0u; sl_idx < sb.slices_.size(); ++sl_idx ) {

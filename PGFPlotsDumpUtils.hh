@@ -1,7 +1,7 @@
 #pragma once
 
 // STV analysis includes
-#include "SliceBinning.hh"
+#include "includes/SliceBinning.hh"
 #include "SliceHistogram.hh"
 
 constexpr double REALLY_BIG_NUMBER = 1e300;
